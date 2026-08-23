@@ -1,11 +1,14 @@
 import type { FastifyInstance } from "fastify";
 import {
-  registerUser,
-  loginUser,
-} from "../../controllers/frontend/authcontroller";
+  registerAdmin,
+  loginAdmin,
+  getAdminProfile,
+} from "../../controllers/admin/authController";
 
 export default async function authRoutes(app: FastifyInstance) {
-  app.post("/register", registerUser);
+  app.post("/register", registerAdmin);
 
-  app.post("/login", loginUser);
+  app.post("/login", loginAdmin);
+
+  app.get("/me", getAdminProfile);
 }

@@ -69,8 +69,6 @@ export const loginUser = async (
   reply: FastifyReply,
 ) => {
   try {
-    console.log("1. LOGIN START");
-
     const { email, password } = request.body as {
       email: string;
       password: string;

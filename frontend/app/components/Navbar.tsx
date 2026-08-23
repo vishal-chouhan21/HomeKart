@@ -57,7 +57,7 @@ export default function Navbar() {
             >
               Home
             </Link>
-            <Link href="#products" className="hover:text-[#24211E] transition">
+            <Link href="/product" className="hover:text-[#24211E] transition">
               Shop All
             </Link>
             <div className="relative group cursor-pointer flex items-center gap-1 hover:text-[#24211E] transition">
@@ -161,7 +161,7 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="/app/pages/product/index.tsx"
+              href="/product"
               onClick={() => setIsOpen(false)}
               className="block text-base text-[#4A453E]"
             >

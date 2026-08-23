@@ -10,7 +10,7 @@ const app = fastify({ logger: true });
 
 // Register CORS plugin
 app.register(cors, {
-  origin: "http://localhost:3000", // Allow requests from this origin
+  origin: ["http://localhost:3000", "http://localhost:3002"], // Allow requests from this origin
   methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   credentials: true, // Allow cookies to be sent
@@ -29,10 +29,10 @@ app.get("/", async (request, reply) => {
   reply.send("Hello, vishal your server is running successfully");
 });
 
-//frontend routes
-app.register(authRoutes, { prefix: "/auth" });
-
 //admin routes
+app.register(authRoutes, { prefix: "/admin" });
+
+//frontend routes
 app.register(userRoutes, { prefix: "/api" });
 
 // Start the server
