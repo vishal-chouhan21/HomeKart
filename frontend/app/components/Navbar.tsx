@@ -92,10 +92,9 @@ export default function Navbar() {
                     <div className="w-7 h-7 rounded-full bg-[#EAE3D9] text-[#24211E] flex items-center justify-center text-xs font-semibold uppercase">
                       {user.name ? user.name.charAt(0) : user.email.charAt(0)}
                     </div>
-                    <span className="max-w-[120px] truncate">
+                    {/* <span className="max-w-[120px] truncate">
                       {user.name || user.email.split("@")[0]}
-                    </span>
-                    <ChevronDown className="w-3.5 h-3.5 text-[#7A7268]" />
+                    </span> */}
                   </button>
                 ) : (
                   <button
@@ -162,7 +161,7 @@ export default function Navbar() {
               Home
             </Link>
             <Link
-              href="#products"
+              href="/app/pages/product/index.tsx"
               onClick={() => setIsOpen(false)}
               className="block text-base text-[#4A453E]"
             >

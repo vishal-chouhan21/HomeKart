@@ -38,7 +38,26 @@ export const registerUser = async (
     });
 
     await newUser.save();
-    reply.status(201).send("User registered successfully");
+
+    //create JWT token
+    const accessToken = await (reply as any).jwtSign(
+      {
+        id: newUser._id,
+        email: newUser.email,
+      },
+      { expiresIn: "15m" },
+    );
+
+    reply.status(201).send({
+      success: true,
+      message: "User registered successfully",
+      accessToken,
+      user: {
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
   } catch (error) {
     reply.status(500).send("Internal server error");
   }
@@ -57,7 +76,6 @@ export const loginUser = async (
       password: string;
     };
 
-    console.log("2. BODY:", email, password);
     //check required fields
     if (!email || !password) {
       reply.status(400).send("Please fill all the fields");
@@ -66,13 +84,11 @@ export const loginUser = async (
 
     //find user by email
     const user = await User.findOne({ email });
-    console.log("3. USER:", user);
     if (!user) {
       reply.status(400).send("Invalid email");
       return;
     }
 
-    console.log("4. USER FOUND");
     if (user.deleted_at) {
       return reply.status(401).send({
         success: false,
@@ -82,13 +98,10 @@ export const loginUser = async (
 
     //compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
-    console.log("5. PASSWORD:", isMatch);
     if (!isMatch) {
       reply.status(400).send("Invalid password");
       return;
     }
-
-    console.log("6. PASSWORD VALID");
 
     //create JWT token
     const accessToken = await (reply as any).jwtSign(
@@ -98,8 +111,6 @@ export const loginUser = async (
       },
       { expiresIn: "15m" },
     );
-
-    console.log("7. TOKEN CREATED:", accessToken);
 
     reply.status(200).send({
       message: "Login successful",
@@ -111,9 +122,7 @@ export const loginUser = async (
       },
     });
   } catch (error) {
-    console.error("========== LOGIN ERROR ==========");
     console.error(error);
-    console.error("=================================");
     reply.status(500).send("Internal server error");
   }
 };

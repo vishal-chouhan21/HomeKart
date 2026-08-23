@@ -36,7 +36,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = "http://localhost:3001/api/user";
+const API_BASE_URL = "http://localhost:3001/api/user"; // Update this to your backend API base URL
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, message: data.message || "Login failed" };
       }
 
-      Cookies.set("token", data.token, { expires: 7, path: "/" });
+      Cookies.set("token", data.accessToken, { expires: 7, path: "/" });
 
       if (data.user) {
         setUser(data.user);
@@ -104,7 +104,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // Fallback: fetch profile if backend login only returns a token
         const userRes = await fetch(`${API_BASE_URL}/me`, {
           headers: {
-            Authorization: `Bearer ${data.token}`,
+            Authorization: `Bearer ${data.accessToken}`,
             "Content-Type": "application/json",
           },
         });
@@ -115,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       router.push("/");
-      return { success: true, message: "Login successful" };
+      return { success: true, message: data.message || "Login successful" };
     } catch (error: unknown) {
       console.error("Login error:", error);
       return {
@@ -146,15 +146,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { success: false, message: data.message || "Signup failed" };
       }
 
-      if (data.token) {
-        Cookies.set("token", data.token, { expires: 7, path: "/" });
+      if (data.accessToken) {
+        Cookies.set("token", data.accessToken, { expires: 7, path: "/" });
         setUser(data.user || null);
-        router.push("/");
       } else {
-        router.push("/login");
+        const userRes = await fetch(`${API_BASE_URL}/me`, {
+          headers: {
+            Authorization: `Bearer ${data.accessToken}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          setUser(userData);
+        }
       }
 
-      return { success: true, message: "Signup successful" };
+      return { success: true, message: data.message || "Signup successful" };
     } catch (error: unknown) {
       console.error("Signup error:", error);
       return {
@@ -170,7 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     Cookies.remove("token", { path: "/" });
     setUser(null);
-    router.push("/login");
+    router.push("/");
   };
 
   return (
