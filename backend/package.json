@@ -5,8 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch server.ts",
-    "start": "bun server.ts"
+    "dev": "node init && bun --watch server.ts",
+    "start": "node init && bun server.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
